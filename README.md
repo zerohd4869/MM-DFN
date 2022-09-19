@@ -34,7 +34,7 @@ bash ./script/run_train_ie.sh
 bash ./script/run_train_me.sh
 ```
 
-(To facilitate further exploration by interested parties, we retain the complete code including ablation and control experiments.)
+Note: To facilitate further exploration by interested parties, we retain the complete code including ablation and control experiments.
 
 ## Results
 
