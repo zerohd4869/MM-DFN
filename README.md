@@ -1,17 +1,17 @@
 # MM-DFN
-Source code for ICASSP 2022 paper "MM-DFN: Multimodal Dynamic Fusion Network For Emotion Recognition in Conversations".
+Source code for ICASSP 2022 paper "[MM-DFN: Multimodal Dynamic Fusion Network For Emotion Recognition in Conversations](https://arxiv.org/pdf/2203.02385.pdf)".
 
 
 ## Quick Start
 
 ### Requirements
-
 * python 3.6.10          
 * torch 1.4.0            
 * torch-geometric 1.4.3
 * torch-scatter 2.0.4
 * scikit-learn 0.21.2
 * CUDA 10.1
+
 
 Install related dependencies:
 ```bash
@@ -22,13 +22,14 @@ pip install -r requirements.txt
 
 The original datasets can be found at [IEMOCAP](https://sail.usc.edu/iemocap/) and [MELD](https://github.com/SenticNet/MELD).
 
-In this work, we focus on ERC in multimodal settings. 
+In this work, we focus on ERC under a multimodal setting. 
 Following MMGCN, raw utterance-level features of textual, acoustic, and visual modality are extracted by TextCNN, OpenSmile, and DenseNet, respectively.
 The processed features can be found by the [link](https://github.com/hujingwen6666/MMGCN).
 
 
 
 ### Run examples
+For training model on IEMOCAP and MELD dataset , you can refer to the following:
 ```bash
 bash ./script/run_train_ie.sh
 bash ./script/run_train_me.sh
