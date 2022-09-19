@@ -27,7 +27,6 @@ Following MMGCN, raw utterance-level features of textual, acoustic, and visual m
 The processed features can be found by the [link](https://github.com/hujingwen6666/MMGCN).
 
 
-
 ### Run examples
 For training model on IEMOCAP and MELD dataset , you can refer to the following:
 ```bash
@@ -69,5 +68,6 @@ Reproduced results of MM-DFN on the MELD datasets:
   year      = {2022}
 }
 ```
+
 
 
