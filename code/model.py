@@ -783,13 +783,11 @@ class MMGatedAttention(nn.Module):
 
 class DialogueGNNModel(nn.Module):
 
-    def __init__(self, base_model, D_m, D_g, D_p, D_e, D_h, D_a, graph_hidden_size, n_speakers, max_seq_len, window_past, window_future,
-                 n_classes=7, listener_state=False, context_attention='simple', dropout_rec=0.5, dropout=0.5, nodal_attention=True, avec=False,
-                 no_cuda=False, graph_type='relation', use_topic=False, alpha=0.1, lamda=0.5, multiheads=6, graph_construct='direct', use_GCN=False,
-                 use_residue=True,
+    def __init__(self, base_model, D_m, D_g, D_p, D_e, D_h, D_a, graph_hidden_size, n_speakers, max_seq_len, window_past, window_future, n_classes=7,
+                 listener_state=False, context_attention='simple', dropout_rec=0.5, dropout=0.5, nodal_attention=True, avec=False, no_cuda=False,
+                 graph_type='relation', use_topic=False, alpha=0.1, lamda=0.5, multiheads=6, graph_construct='direct', use_GCN=False, use_residue=True,
                  dynamic_edge_w=False, D_m_v=512, D_m_a=100, modals='avl', att_type='gated', av_using_lstm=False, Deep_GCN_nlayers=64, dataset='IEMOCAP',
-                 use_speaker=True, use_modal=False, reason_flag=False, multi_modal=True, use_crn_speaker=False, speaker_weights='1-1-1', modal_weight=1.0,
-                 ):
+                 use_speaker=True, use_modal=False, reason_flag=False, multi_modal=True, use_crn_speaker=False, speaker_weights='1-1-1', modal_weight=1.0):
 
         super(DialogueGNNModel, self).__init__()
 
@@ -817,10 +815,9 @@ class DialogueGNNModel(nn.Module):
         self.use_crn_speaker = use_crn_speaker
         self.speaker_weights = list(map(float, speaker_weights.split('-')))
         self.modal_weight = modal_weight
-        # self.rnn_weights = None  # list(map(float, rnn_weights.split('-')))
 
         if self.att_type in ['gated', 'concat_subsequently', 'mfn', 'mfn_only', 'tfn_only', 'lmf_only', 'concat_only']:
-            # self.multi_modal = True
+            # multi_modal = True
             self.av_using_lstm = av_using_lstm
         else:
             # concat
@@ -934,12 +931,10 @@ class DialogueGNNModel(nn.Module):
                                              lamda=0.5, alpha=0.1, variant=True, return_feature=self.return_feature, use_residue=self.use_residue,
                                              reason_flag=self.reason_flag)
                 if 'v' in self.modals:
-                    # self.graph_net_v = self.graph_net_a
                     self.graph_net_v = GCNII(nfeat=2 * D_e, nlayers=Deep_GCN_nlayers, nhidden=graph_hidden_size, nclass=n_classes, dropout=self.dropout,
                                              lamda=0.5, alpha=0.1, variant=True, return_feature=self.return_feature, use_residue=self.use_residue,
                                              reason_flag=self.reason_flag)
                 if 'l' in self.modals:
-                    # self.graph_net_v = self.graph_net_a
                     self.graph_net_l = GCNII(nfeat=2 * D_e, nlayers=Deep_GCN_nlayers, nhidden=graph_hidden_size, nclass=n_classes, dropout=self.dropout,
                                              lamda=0.5, alpha=0.1, variant=True, return_feature=self.return_feature, use_residue=self.use_residue,
                                              reason_flag=self.reason_flag)
@@ -1167,7 +1162,6 @@ class DialogueGNNModel(nn.Module):
             if not self.multi_modal:
                 emotions = self.base_linear(U)
             else:
-                # TODO
                 if 'a' in self.modals:
                     # (21.32,200)
                     emotions_a = self.linear_a(U_a)
@@ -1283,7 +1277,6 @@ class DialogueGNNModel(nn.Module):
                     # (77,32,400) << (77,32,900)
                     emotions_feat_ = self.mfn(emotions_tmp)
 
-                    # emotions_feat_tmp = emotions_feat_.view(-1)
                     emotions_feat = []
                     batch_size = emotions_feat_.size(1)
                     for j in range(batch_size):
@@ -1427,7 +1420,6 @@ class CNNFeatureExtractor(nn.Module):
 
     def init_pretrained_embeddings_from_numpy(self, pretrained_word_vectors):
         self.embedding.weight = nn.Parameter(torch.from_numpy(pretrained_word_vectors).float())
-        # if is_static:
         self.embedding.weight.requires_grad = False
 
     def forward(self, x, umask):
@@ -1545,8 +1537,8 @@ class DialogueGCN_DailyModel(nn.Module):
                                                                                         self.window_past,
                                                                                         self.window_future,
                                                                                         self.edge_type_mapping,
-                                                                                        self.att_model, self.no_cuda)
-        log_prob = self.graph_net(features, edge_index, edge_norm, edge_type, seq_lengths, umask, self.nodal_attention,
-                                  self.avec)
+                                                                                        self.att_model,
+                                                                                        self.no_cuda)
+        log_prob = self.graph_net(features, edge_index, edge_norm, edge_type, seq_lengths, umask, self.nodal_attention, self.avec)
 
         return log_prob, edge_index, edge_norm, edge_type, edge_index_lengths
