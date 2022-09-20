@@ -94,7 +94,6 @@ def get_IEMOCAP_loaders(data_path=None, batch_size=32, valid_rate=0.1, num_worke
 def train_or_eval_model(model, loss_f, dataloader, epoch=0, train_flag=False, optimizer=None, cuda_flag=False, target_names=None, tensorboard=False):
     losses, preds, labels, masks = [], [], [], []
     alphas, alphas_f, alphas_b, vids = [], [], [], []
-    # max_sequence_len = []
 
     assert not train_flag or optimizer != None
     if train_flag:
@@ -107,14 +106,10 @@ def train_or_eval_model(model, loss_f, dataloader, epoch=0, train_flag=False, op
             optimizer.zero_grad()
 
         textf, visuf, acouf, qmask, umask, label = [d.cuda() for d in data[:-1]] if cuda_flag else data[:-1]
-
-        # max_sequence_len.append(textf.size(0))
-
         log_prob, alpha, alpha_f, alpha_b, _ = model(textf, qmask, umask)
         lp_ = log_prob.transpose(0, 1).contiguous().view(-1, log_prob.size()[2])
         labels_ = label.view(-1)
         loss = loss_f(lp_, labels_, umask)
-        # loss = loss_f(lp_, label)
 
         pred_ = torch.argmax(lp_, 1)
         preds.append(pred_.data.cpu().numpy())
@@ -201,9 +196,7 @@ def train_or_eval_graph_model(model, loss_f, dataloader, epoch=0, train_flag=Fal
         lengths = [(umask[j] == 1).nonzero().tolist()[-1][0] + 1 for j in range(len(umask))]
 
         if args.multi_modal and args.mm_fusion_mthd in ['gated', 'mfn', 'mfn_only', 'concat_subsequently', 'tfn_only', 'lmf_only', 'concat_only']:
-
             log_prob, e_i, e_n, e_t, e_l = model(textf, qmask, umask, lengths, acouf, visuf, test_label)
-
         else:
             log_prob, e_i, e_n, e_t, e_l = model(textf, qmask, umask, lengths)
 
