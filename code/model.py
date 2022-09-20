@@ -795,8 +795,8 @@ class DialogueGNNModel(nn.Module):
         self.avec = avec
         self.no_cuda = no_cuda
         self.graph_type = graph_type
-        self.alpha = alpha  # 0.1
-        self.lamda = lamda  # 0.5
+        self.alpha = alpha
+        self.lamda = lamda
         self.multiheads = multiheads
         self.graph_construct = graph_construct
         self.use_topic = use_topic
@@ -805,7 +805,7 @@ class DialogueGNNModel(nn.Module):
         self.use_residue = use_residue
         self.dynamic_edge_w = dynamic_edge_w
         self.return_feature = True
-        self.modals = [x for x in modals]  # a, v, l
+        self.modals = [x for x in modals]  # [a, v, l]
         self.use_speaker = use_speaker
         self.use_modal = use_modal
         self.att_type = att_type
