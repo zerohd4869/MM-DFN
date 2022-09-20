@@ -296,7 +296,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--use_speaker', action='store_true', default=False, help='whether to use speaker embedding')
 
-    parser.add_argument('--reason_flag', action='store_true', default=True, help='reason flag')
+    parser.add_argument('--reason_flag', action='store_true', default=False, help='reason flag')
 
     parser.add_argument('--epochs', type=int, default=30, metavar='E', help='number of epochs')
 
@@ -330,7 +330,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--loss', default="FocalLoss", help='loss function: FocalLoss/NLLLoss')
 
-    parser.add_argument('--class_weight', action='store_true', default=True, help='use class weights')
+    parser.add_argument('--class_weight', action='store_true', default=False, help='use class weights')
 
     parser.add_argument('--save_model_dir', type=str, default='../outputs/iemocap_demo/', help='saved model dir')
 
