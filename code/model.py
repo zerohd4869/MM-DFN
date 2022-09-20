@@ -1,3 +1,4 @@
+import os
 import math
 import numpy as np
 import torch
@@ -818,7 +819,7 @@ class DialogueGNNModel(nn.Module):
         self.modal_weight = modal_weight
         # self.rnn_weights = None  # list(map(float, rnn_weights.split('-')))
 
-        if self.att_type in ['gated', 'concat_subsequently', 'mfn', 'mfn_only']:
+        if self.att_type in ['gated', 'concat_subsequently', 'mfn', 'mfn_only', 'tfn_only', 'lmf_only', 'concat_only']:
             # self.multi_modal = True
             self.av_using_lstm = av_using_lstm
         else:
@@ -993,9 +994,19 @@ class DialogueGNNModel(nn.Module):
                 else:
                     self.smax_fc = nn.Linear(100, n_classes)
             elif self.att_type in ['mfn', 'mfn_only']:
-                from mfn import MFN
+                from model_fusion import MFN
                 self.mfn = MFN()
                 self.smax_fc = nn.Linear(400, n_classes)
+            elif self.att_type in ['tfn_only']:
+                from model_fusion import TFN
+                self.tfn = TFN()
+                self.smax_fc = nn.Linear(300, n_classes)
+            elif self.att_type in ['lmf_only']:
+                from model_fusion import LMF
+                self.lmf = LMF()
+                self.smax_fc = nn.Linear(300, n_classes)
+            elif self.att_type in ['concat_only']:
+                self.smax_fc = nn.Linear(900, n_classes)
             else:
                 self.smax_fc = nn.Linear(2 * D_e + graph_hidden_size * len(self.modals), n_classes)
 
@@ -1235,10 +1246,8 @@ class DialogueGNNModel(nn.Module):
                 emotions_feat = self.dropout_(emotions_feat)
                 log_prob = F.log_softmax(self.smax_fc(emotions_feat), 1)
         elif self.graph_type == 'GCN3' or self.graph_type == 'DeepGCN':
-            if self.use_topic:
-                topicLabel = []
-            else:
-                topicLabel = []
+
+            # topicLabel = []
             if not self.multi_modal:
                 log_prob = self.graph_net(features, seq_lengths, qmask)
             else:
@@ -1295,8 +1304,6 @@ class DialogueGNNModel(nn.Module):
             if test_label:
                 index = 15
                 print('# deepGCN layer ' + str(index))
-                import numpy as np
-                import os
                 if not os.path.isdir('../outputs/iemocap/'): os.makedirs('../outputs/iemocap/')
                 np.save("../outputs/iemocap/1080_v2_test_output_multi_{}".format(index), emotions_feat.data.cpu().numpy())
 
@@ -1331,8 +1338,6 @@ class DialogueGNNModel(nn.Module):
             if test_label:
                 index = 15
                 print('# deepGCN layer ' + str(index))
-                import numpy as np
-                import os
                 if not os.path.isdir('../outputs/iemocap/'): os.makedirs('../outputs/iemocap/')
                 np.save("../outputs/iemocap/1080_v3_test_output_multi_after_relu-fc_{}".format(index), emotions_feat.data.cpu().numpy())
 
@@ -1381,7 +1386,6 @@ class DialogueGNNModel(nn.Module):
                     # (77,32,400) << (77,32,900)
                     emotions_feat_ = self.mfn(emotions_tmp)
 
-                    # emotions_feat_tmp = emotions_feat_.view(-1)
                     emotions_feat = []
                     batch_size = emotions_feat_.size(1)
                     for j in range(batch_size):
@@ -1389,8 +1393,19 @@ class DialogueGNNModel(nn.Module):
                     node_features = torch.cat(emotions_feat, dim=0)
                     if torch.cuda.is_available():
                         emotions_feat = node_features.cuda()
+                elif self.att_type == 'tfn_only':
+                    emotions_feat = self.tfn(emotions_a, emotions_v, emotions_l)
+
+                    if test_label:
+                        print('# tfn layer v2 ')
+                        print(type(emotions_feat), emotions_feat)
+                        # np.save("./outputs/iemocap//TFN_base_v2/tfn_multi_feature_v2", emotions_feat.data.cpu().numpy())  # mfn
+                elif self.att_type == 'lmf_only':
+                    emotions_feat = self.lmf(emotions_a, emotions_v, emotions_l)
+                elif self.att_type == 'concat_only':
+                    emotions_feat = torch.cat([emotions_a, emotions_v, emotions_l], dim=-1)
                 else:
-                    print("There is no such attention mechnism")
+                    print("There is no such fusion methods")
 
                 emotions_feat = self.dropout_(emotions_feat)
                 log_prob = F.log_softmax(self.smax_fc(emotions_feat), 1)

@@ -8,7 +8,6 @@ Source code for ICASSP 2022 paper "[MM-DFN: Multimodal Dynamic Fusion Network Fo
 * python 3.6.10          
 * torch 1.4.0            
 * torch-geometric 1.4.3
-* torch-scatter 2.0.4
 * scikit-learn 0.21.2
 * CUDA 10.1
 

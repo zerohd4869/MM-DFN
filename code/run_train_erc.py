@@ -201,7 +201,7 @@ def train_or_eval_graph_model(model, loss_f, dataloader, epoch=0, train_flag=Fal
 
         lengths = [(umask[j] == 1).nonzero().tolist()[-1][0] + 1 for j in range(len(umask))]
 
-        if args.multi_modal and args.mm_fusion_mthd in ['gated', 'mfn', 'concat_subsequently', 'mfn_only']:
+        if args.multi_modal and args.mm_fusion_mthd in ['gated', 'mfn', 'mfn_only', 'concat_subsequently', 'tfn_only', 'lmf_only', 'concat_only']:
 
             log_prob, e_i, e_n, e_t, e_l = model(textf, qmask, umask, lengths, acouf, visuf, test_label)
 
@@ -264,7 +264,7 @@ if __name__ == '__main__':
     parser.add_argument('--modals', default='avl', help='modals to fusion: avl')
 
     parser.add_argument('--mm_fusion_mthd', default='concat_subsequently',
-                        help='method to use multimodal information: concat, gated, concat_subsequently, mfn, mfn_only')
+                        help='method to use multimodal information: mfn, concat, gated, concat_subsequently,mfn_only,tfn_only,lmf_only')
 
     parser.add_argument('--use_modal', action='store_true', default=False, help='whether to use modal embedding')
 
@@ -297,7 +297,6 @@ if __name__ == '__main__':
     parser.add_argument('--use_speaker', action='store_true', default=False, help='whether to use speaker embedding')
 
     parser.add_argument('--reason_flag', action='store_true', default=True, help='reason flag')
-
 
     parser.add_argument('--epochs', type=int, default=30, metavar='E', help='number of epochs')
 
@@ -508,7 +507,6 @@ if __name__ == '__main__':
         model.cuda()
     else:
         print('Running on CPU')
-
 
     if args.loss == 'FocalLoss' and args.graph_model:
         # FocalLoss
