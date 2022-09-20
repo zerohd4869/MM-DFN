@@ -19,7 +19,6 @@ seed = 2021
 
 
 def seed_everything(seed=seed):
-    # print(seed)
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -248,7 +247,6 @@ def train_or_eval_graph_model(model, loss_f, dataloader, epoch=0, train_flag=Fal
     return all_each, all_acc, avg_loss, avg_accuracy, labels, preds, avg_fscore, [vids, ei, et, en, el]
 
 
-# scikit-learn               0.24.1 >> 0.21.2
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
