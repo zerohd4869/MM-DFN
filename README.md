@@ -3,6 +3,7 @@ Source code for ICASSP 2022 paper "[MM-DFN: Multimodal Dynamic Fusion Network Fo
 
 In this work, we focus on emotion recognition in multimodal conversations (multimodal ERC). If you are interested in textual ERC, you can refer to a related work [DialogueCRN](https://arxiv.org/pdf/2106.01978.pdf) ([code](https://github.com/zerohd4869/DialogueCRN)).
 
+
 ## Quick Start
 
 ### Requirements
@@ -61,7 +62,7 @@ Results of MM-DFN on MELD dataset:
 
 Evaluation matrices: Acc, macro-F1, weighted-F1, and the F1 score per class.
 
-# Citation
+## Citation
 ```
 @inproceedings{DBLP:conf/icassp/HuHWJM22,
   author    = {Dou Hu and
