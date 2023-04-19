@@ -24,7 +24,7 @@ pip install -r requirements.txt
 The original datasets can be found at [IEMOCAP](https://sail.usc.edu/iemocap/) and [MELD](https://github.com/SenticNet/MELD).
 
 
-Following previous works (bc-LSTM, DialogueRNN, MMGCN, et al.), raw utterance-level features of textual, acoustic, and visual modality are extracted by **TextCNN with Glove embedding**, **OpenSmile**, and **DenseNet**, respectively.
+Following previous works (DialogueRNN, MMGCN, et al.), raw utterance-level features of textual, acoustic, and visual modality are extracted by **TextCNN with Glove embedding**, **OpenSmile**, and **DenseNet**, respectively.
 The processed features can be found by the [link](https://github.com/zerohd4869/MM-DFN/tree/main/data).
 
 Besides, another alternative is to use BERT/RoBERTa to process text features, which will achieve better performance in most cases. You can find the code and processed textual features with RoBERTa embedding in [COSMIC](https://github.com/declare-lab/conv-emotion/tree/master/COSMIC/feature-extraction).
@@ -32,7 +32,7 @@ Besides, another alternative is to use BERT/RoBERTa to process text features, wh
 
 ### Run examples
 
-For training model on IEMOCAP and MELD dataset , you can refer to the following:
+For training model on IEMOCAP and MELD datasets, you can refer to the following:
 
 ```bash
 # IEMOCAP dataset
@@ -45,14 +45,14 @@ Note: The optimal hyper-parameters (i.e., the number of gcn layers) are slight d
 
 ## Results
 
-Results (F1-score) of MM-DFN on the IEMOCAP dataset:
+Results (F1-score) of MM-DFN on IEMOCAP dataset:
 
 | **IEMOCAP**| | | | | | | | |
 |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
 |Happy|Sad|Neutral|Angry|Excited|Frustrated|Acc|Macro-F1|Weighted-F1|
 |42.22|78.98|66.42|69.77|75.56|66.33|68.21|66.54|68.18|
 
-Results (F1-score) of MM-DFN on the MELD dataset:
+Results (F1-score) of MM-DFN on MELD dataset:
 
 | **MELD** | | | | | | | | |
 |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
