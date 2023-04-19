@@ -1,6 +1,7 @@
 # MM-DFN
 Source code for ICASSP 2022 paper "[MM-DFN: Multimodal Dynamic Fusion Network For Emotion Recognition in Conversations](https://arxiv.org/pdf/2203.02385.pdf)".
 
+In this work, we focus on emotion recognition in multimodal conversations (multimodal ERC). If you are interested in textual ERC, you can refer to a related work [DialogueCRN](https://arxiv.org/pdf/2106.01978.pdf) ([code](https://github.com/zerohd4869/DialogueCRN)).
 
 ## Quick Start
 
@@ -8,6 +9,7 @@ Source code for ICASSP 2022 paper "[MM-DFN: Multimodal Dynamic Fusion Network Fo
 * python 3.6.10          
 * torch 1.4.0            
 * torch-geometric 1.4.3
+* torch-scatter 2.0.4
 * scikit-learn 0.21.2
 * CUDA 10.1
 
@@ -21,30 +23,36 @@ pip install -r requirements.txt
 
 The original datasets can be found at [IEMOCAP](https://sail.usc.edu/iemocap/) and [MELD](https://github.com/SenticNet/MELD).
 
-In this work, we focus on ERC under a multimodal setting. 
-Following MMGCN, raw utterance-level features of textual, acoustic, and visual modality are extracted by TextCNN, OpenSmile, and DenseNet, respectively.
-The processed features can be found by the [link](https://github.com/hujingwen6666/MMGCN).
+
+Following previous works (bc-LSTM, DialogueRNN, MMGCN, et al.), raw utterance-level features of textual, acoustic, and visual modality are extracted by **TextCNN with Glove embedding**, **OpenSmile**, and **DenseNet**, respectively.
+The processed features can be found by the [link](https://github.com/zerohd4869/MM-DFN/tree/main/data).
+
+Besides, another alternative is to use BERT/RoBERTa to process text features, which will achieve better performance in most cases. You can find the code and processed textual features with RoBERTa embedding in [COSMIC](https://github.com/declare-lab/conv-emotion/tree/master/COSMIC/feature-extraction).
 
 
 ### Run examples
+
 For training model on IEMOCAP and MELD dataset , you can refer to the following:
+
 ```bash
+# IEMOCAP dataset
 bash ./script/run_train_ie.sh
+# MELD dataset
 bash ./script/run_train_me.sh
 ```
 
-Note: To facilitate further research by interested parties, we retain the complete code including ablation and control experiments.
+Note: The optimal hyper-parameters (i.e., the number of gcn layers) are slight differences under different experimental configurations (i.e., the version of CUDA and PyTorch). To facilitate further research by interested parties, we retain the complete code including ablation and control experiments.
 
 ## Results
 
-Reproduced results of MM-DFN on the IEMOCAP datasets:
+Results of MM-DFN on the IEMOCAP datasets (F1-score):
 
 | **IEMOCAP**| | | | | | | | |
 |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
 |Happy|Sad|Neutral|Angry|Excited|Frustrated|Acc|Macro-F1|Weighted-F1|
 |42.22|78.98|66.42|69.77|75.56|66.33|68.21|66.54|68.18|
 
-Reproduced results of MM-DFN on the MELD datasets:
+Reproduced results of MM-DFN on the MELD datasets (F1-score):
 
 | **MELD** | | | | | | | | |
 |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|

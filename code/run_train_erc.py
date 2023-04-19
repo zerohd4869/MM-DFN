@@ -15,10 +15,8 @@ from torch.utils.data.sampler import SubsetRandomSampler
 
 from loss import FocalLoss, MaskedNLLLoss
 
-seed = 2021
 
-
-def seed_everything(seed=seed):
+def seed_everything(seed=2021):
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -163,7 +161,7 @@ def train_or_eval_graph_model(model, loss_f, dataloader, epoch=0, train_flag=Fal
     else:
         model.eval()
 
-    seed_everything()
+    seed_everything(seed=args.seed)
     for data in dataloader:
         if train_flag:
             optimizer.zero_grad()
@@ -331,6 +329,10 @@ if __name__ == '__main__':
 
     parser.add_argument('--load_model', type=str, default='../outputs/iemocap_demo/model_4.pkl', help='trained model dir')
 
+    parser.add_argument('--seed', type=int, default=2021, help='random seed')
+
+    parser.add_argument('--patience', type=int, default=5, help='early stop')
+
     args = parser.parse_args()
     today = datetime.datetime.now()
     print(args)
@@ -411,7 +413,7 @@ if __name__ == '__main__':
                                            1.0 / 0.026401153,
                                            1.0 / 0.113714183])
 
-    seed_everything()
+    seed_everything(seed=args.seed)
     if args.graph_model:
         model = DialogueGNNModel(args.base_model,
                                  D_m, D_g, D_p, D_e, D_h, D_a, graph_h,
@@ -546,6 +548,9 @@ if __name__ == '__main__':
         print(all_acc)
         exit(0)
 
+    all_test_fscore, all_test_acc = [], []
+    best_epoch, best_epoch2, patience, best_eval_fscore, best_eval_loss = -1, -1, 0, 0, None
+    patience2 = 0
     for e in range(n_epochs):
         start_time = time.time()
 
@@ -574,14 +579,6 @@ if __name__ == '__main__':
                                                                                                                       cuda_flag=cuda_flag,
                                                                                                                       modals=args.modals,
                                                                                                                       target_names=target_names)
-            all_fscore.append(test_fscore)
-            if max(all_fscore) == test_fscore:
-                import os
-
-                save_dir = args.save_model_dir
-                if not os.path.isdir(save_dir): os.makedirs(save_dir)
-                torch.save(model, os.path.join(save_dir, 'model_' + str(e) + '.pkl'))
-
 
         else:
             _, _, train_loss, train_acc, _, _, _, train_fscore, _ = train_or_eval_model(model=model,
@@ -606,13 +603,27 @@ if __name__ == '__main__':
                                                                                                                                     epoch=e,
                                                                                                                                     cuda_flag=cuda_flag,
                                                                                                                                     target_names=target_names)
-            all_fscore.append(test_fscore)
 
-        if args.tensorboard:
-            writer.add_scalar('test: accuracy', test_acc, e)
-            writer.add_scalar('test: fscore', test_fscore, e)
-            writer.add_scalar('train: accuracy', train_acc, e)
-            writer.add_scalar('train: fscore', train_fscore, e)
+        all_test_fscore.append(test_fscore)
+        all_test_acc.append(test_acc)
+        if args.valid_rate > 0:
+            eval_loss, _, eval_fscore = valid_loss, valid_acc, valid_fscore
+        else:
+            eval_loss, _, eval_fscore = test_loss, test_acc, test_fscore
+        if e == 0 or best_eval_fscore < eval_fscore:
+            patience = 0
+            best_epoch, best_eval_fscore = e, eval_fscore
+        else:
+            patience += 1
+        if best_eval_loss is None:
+            best_eval_loss = eval_loss
+            best_epoch2 = 0
+        else:
+            if eval_loss < best_eval_loss:
+                best_epoch2, best_eval_loss = e, eval_loss
+                patience2 = 0
+            else:
+                patience2 += 1
 
         print(
             'epoch: {}, train_loss: {}, train_acc: {}, train_fscore: {}, valid_loss: {}, valid_acc: {}, valid_fscore: {}, test_loss: {}, test_acc: {}, test_fscore: {}, time: {} sec'. \
@@ -621,9 +632,13 @@ if __name__ == '__main__':
 
         print(all_each)
         print(all_acc)
-    if args.tensorboard:
-        writer.close()
 
-    print('Test performance..')
-    print('F-Score:', max(all_fscore))
-    print('Epoch:', all_fscore.index(max(all_fscore)))
+        if patience >= args.patience and patience2 >= args.patience:
+            print('Early stoping...', patience, patience2)
+            break
+
+    print('Final Test performance...')
+    print('Early stoping...', patience, patience2)
+    print('Eval-metric: F1, Epoch: {}, best_eval_fscore: {}, Accuracy: {}, F1-Score: {}'.format(best_epoch, best_eval_fscore,
+                                                                                                all_test_acc[best_epoch] if best_epoch >= 0 else 0,
+                                                                                                all_test_fscore[best_epoch] if best_epoch >= 0 else 0))
