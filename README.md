@@ -45,14 +45,14 @@ Note: The optimal hyper-parameters (i.e., the number of gcn layers) are slight d
 
 ## Results
 
-Results of MM-DFN on the IEMOCAP datasets (F1-score):
+Results (F1-score) of MM-DFN on the IEMOCAP dataset:
 
 | **IEMOCAP**| | | | | | | | |
 |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
 |Happy|Sad|Neutral|Angry|Excited|Frustrated|Acc|Macro-F1|Weighted-F1|
 |42.22|78.98|66.42|69.77|75.56|66.33|68.21|66.54|68.18|
 
-Reproduced results of MM-DFN on the MELD datasets (F1-score):
+Results (F1-score) of MM-DFN on the MELD dataset:
 
 | **MELD** | | | | | | | | |
 |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
