@@ -28,8 +28,6 @@ The original datasets can be found at [IEMOCAP](https://sail.usc.edu/iemocap/) a
 Following previous works (DialogueRNN, MMGCN, et al.), raw utterance-level features of textual, acoustic, and visual modality are extracted by **TextCNN with Glove embedding**, **OpenSmile**, and **DenseNet**, respectively.
 The processed features can be found by the [link](https://github.com/zerohd4869/MM-DFN/tree/main/data).
 
-Besides, another alternative is to use BERT/RoBERTa to process text features, which will achieve better performance in most cases. You can find the code and processed textual features with RoBERTa embedding in [COSMIC](https://github.com/declare-lab/conv-emotion/tree/master/COSMIC/feature-extraction).
-
 
 ### Run examples
 
@@ -42,7 +40,7 @@ bash ./script/run_train_ie.sh
 bash ./script/run_train_me.sh
 ```
 
-Note: The optimal hyper-parameters (i.e., the number of gcn layers) are slight differences under different experimental configurations (i.e., the version of CUDA and PyTorch). To facilitate further research by interested parties, we retain the complete code including ablation and control experiments.
+Note: The optimal hyper-parameters (e.g., the number of gcn layers) are slight differences under different experimental configurations (i.e., the version of CUDA and PyTorch). To facilitate further research by interested parties, we retain the complete code including ablation and control experiments.
 
 ## Results
 
